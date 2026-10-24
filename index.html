@@ -1,0 +1,1637 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+<meta name="theme-color" content="#0e0e17" />
+<title>ROOBY Market</title>
+<style>
+  :root{
+    --bg:#0e0e17;
+    --bg-2:#15151f;
+    --surface:#1c1c28;
+    --surface-2:#23232f;
+    --line:rgba(255,255,255,.07);
+    --text:#f3f1f5;
+    --dim:#a6a1b2;
+    --faint:#6f6a7c;
+    --gold:#e9c15f;
+    --gold-2:#f5d98a;
+    --gold-soft:rgba(233,193,95,.14);
+    --violet:#8b6bff;
+    --violet-soft:rgba(139,107,255,.14);
+    --green:#4ade80;
+    --red:#ff6b6b;
+    --amber:#fbbf24;
+    --radius:18px;
+    --shadow:0 10px 30px rgba(0,0,0,.35);
+    --safe-b:env(safe-area-inset-bottom,0px);
+    --nav-h:62px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    background:
+      radial-gradient(900px 500px at 100% -5%, rgba(139,107,255,.18), transparent 60%),
+      radial-gradient(800px 500px at -10% 20%, rgba(233,193,95,.10), transparent 55%),
+      var(--bg);
+    color:var(--text);
+    -webkit-tap-highlight-color:transparent;
+  }
+  ::selection{background:var(--gold-soft)}
+  button{font-family:inherit;cursor:pointer}
+  input,select,textarea{font-family:inherit}
+
+  .app{
+    width:100%;max-width:480px;margin:0 auto;
+    min-height:100vh;min-height:100dvh;
+    display:flex;flex-direction:column;position:relative;
+  }
+  @media(min-width:520px){.app{min-height:min(900px,96vh);border-left:1px solid var(--line);border-right:1px solid var(--line)}}
+
+  /* Header */
+  header.topbar{
+    position:sticky;top:0;z-index:30;
+    display:flex;align-items:center;gap:12px;
+    padding:calc(14px + var(--safe-b)) 16px 12px;
+    background:linear-gradient(180deg,rgba(14,14,23,.92),rgba(14,14,23,.7));
+    backdrop-filter:blur(14px);
+    border-bottom:1px solid var(--line);
+  }
+  .brand{display:flex;align-items:center;gap:10px;min-width:0}
+  .logo{
+    width:40px;height:40px;border-radius:12px;flex-shrink:0;
+    display:grid;place-items:center;font-weight:800;font-size:16px;color:#1a1510;
+    background:linear-gradient(135deg,#f5d98a,#c8933b);
+    box-shadow:0 0 18px rgba(233,193,95,.35), inset 0 0 0 1px rgba(255,255,255,.35);
+  }
+  .brand h1{font-size:17px;font-weight:800;letter-spacing:.3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .brand h1 span{color:var(--gold)}
+  .topbar .spacer{margin-left:auto}
+  .icon-btn{
+    width:40px;height:40px;border-radius:12px;border:1px solid var(--line);
+    background:var(--surface);color:var(--dim);font-size:18px;
+    display:grid;place-items:center;flex-shrink:0;transition:transform .06s,background .15s;
+  }
+  .icon-btn:active{transform:scale(.93);background:var(--surface-2)}
+  .icon-btn:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+
+  .back-btn{display:none;width:40px;height:40px;border-radius:12px;border:1px solid var(--line);background:var(--surface);color:var(--text);font-size:20px;line-height:1;flex-shrink:0;align-items:center;justify-content:center}
+  .back-btn.show{display:flex}
+
+  /* Content */
+  main.content{flex:1;overflow-y:auto;padding:16px 16px 0;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.12) transparent}
+  main.content::-webkit-scrollbar{width:6px}
+  main.content::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:99px}
+
+  .screen{animation:fade .22s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  [hidden]{display:none!important}
+
+  .section-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--faint);margin:20px 0 12px}
+  .section-title:first-child{margin-top:4px}
+
+  /* Greeting / hero */
+  .hero{
+    position:relative;overflow:hidden;
+    border-radius:22px;padding:22px 20px;margin-bottom:4px;
+    background:linear-gradient(140deg,rgba(139,107,255,.22),rgba(233,193,95,.10) 55%,rgba(14,14,23,.1));
+    border:1px solid rgba(233,193,95,.22);
+  }
+  .hero::before{
+    content:"";position:absolute;inset:0;pointer-events:none;
+    background:conic-gradient(from 180deg at 50% 0%, rgba(233,193,95,.35), rgba(139,107,255,.28), rgba(74,222,128,.25), rgba(233,193,95,.35));
+    opacity:.45;filter:blur(18px);mask:linear-gradient(#000,#0000 70%);
+  }
+  .hero h2{font-size:20px;font-weight:800;margin-bottom:6px;position:relative}
+  .hero p{font-size:13.5px;color:var(--dim);line-height:1.5;position:relative;max-width:34ch}
+  .hero .u{color:var(--gold-2);font-weight:700}
+
+  .search{
+    margin:16px 0 4px;position:relative;
+  }
+  .search input{
+    width:100%;padding:13px 14px 13px 42px;border-radius:15px;
+    background:var(--surface);border:1px solid var(--line);color:var(--text);font-size:14.5px;outline:none;
+  }
+  .search input:focus{border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-soft)}
+  .search .mag{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--faint);font-size:16px;pointer-events:none}
+
+  /* Category grid */
+  .cat-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .cat-card{
+    position:relative;border-radius:var(--radius);padding:16px 14px;
+    background:var(--surface);border:1px solid var(--line);cursor:pointer;
+    display:flex;flex-direction:column;gap:10px;min-height:98px;
+    transition:transform .1s,background .15s,border-color .15s;overflow:hidden;
+  }
+  .cat-card:hover{background:var(--surface-2)}
+  .cat-card:active{transform:scale(.97)}
+  .cat-card:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+  .cat-card .ic{font-size:26px;line-height:1}
+  .cat-card .nm{font-size:13.5px;font-weight:700;line-height:1.25}
+  .cat-card::after{
+    content:"";position:absolute;top:0;left:0;right:0;height:1.5px;
+    background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:.5;
+  }
+
+  .cta-card{
+    margin-top:12px;border-radius:var(--radius);padding:16px;
+    background:linear-gradient(135deg,rgba(233,193,95,.16),rgba(139,107,255,.14));
+    border:1px solid rgba(233,193,95,.28);
+    display:flex;align-items:center;gap:14px;cursor:pointer;
+    transition:transform .1s,box-shadow .15s;
+  }
+  .cta-card:hover{box-shadow:var(--shadow)}
+  .cta-card:active{transform:scale(.98)}
+  .cta-card .ic{font-size:28px}
+  .cta-card .t{font-size:15px;font-weight:800}
+  .cta-card .s{font-size:12.5px;color:var(--dim);margin-top:3px}
+  .cta-card .go{margin-left:auto;color:var(--gold);font-size:20px}
+
+  /* Generic card list */
+  .list-card{
+    display:flex;align-items:center;gap:14px;padding:14px;
+    background:var(--surface);border:1px solid var(--line);border-radius:16px;margin-bottom:10px;
+  }
+  .avatar{
+    width:46px;height:46px;border-radius:13px;flex-shrink:0;
+    display:grid;place-items:center;font-weight:800;font-size:16px;color:#1a1510;
+    background:linear-gradient(135deg,#f5d98a,#c8933b);
+  }
+  .avatar.violet{background:linear-gradient(135deg,#b7a2ff,#6f52d8);color:#fff}
+  .avatar.green{background:linear-gradient(135deg,#8bee9a,#2f9e5f);color:#0a1a10}
+  .avatar.ghost{background:var(--surface-2);color:var(--dim)}
+  .list-card .info{flex:1;min-width:0}
+  .list-card .info .t{font-size:14.5px;font-weight:700}
+  .list-card .info .s{font-size:12.5px;color:var(--dim);margin-top:2px}
+  .list-card .price{font-size:14px;font-weight:800;color:var(--gold-2);white-space:nowrap}
+  .list-card .price small{color:var(--dim);font-weight:500}
+
+  /* Buttons */
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    padding:12px 16px;border-radius:14px;border:none;font-size:14px;font-weight:700;
+    background:var(--surface-2);color:var(--text);transition:transform .06s,opacity .15s,filter .15s;
+  }
+  .btn:active{transform:scale(.97)}
+  .btn:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+  .btn.block{width:100%}
+  .btn.primary{
+    background:linear-gradient(135deg,#f5d98a,#c8933b);color:#1a1510;
+    box-shadow:0 8px 20px rgba(233,193,95,.28);
+  }
+  .btn.violet{background:linear-gradient(135deg,#9d81ff,#6f52d8);color:#fff}
+  .btn.ghost{background:transparent;border:1px solid var(--line);color:var(--text)}
+  .btn.small{padding:8px 12px;font-size:12.5px;border-radius:11px}
+  .btn:disabled{opacity:.45;cursor:not-allowed;filter:grayscale(.3)}
+
+  .btn-row{display:flex;gap:10px;margin-top:14px}
+  .btn-row .btn{flex:1}
+
+  /* Empty state */
+  .empty{
+    text-align:center;padding:44px 20px;color:var(--faint);
+  }
+  .empty .ic{font-size:40px;margin-bottom:12px;opacity:.7}
+  .empty .t{font-size:15px;font-weight:700;color:var(--dim)}
+  .empty .s{font-size:12.5px;margin-top:4px}
+
+  /* Forms */
+  .field{margin-bottom:14px}
+  .field label{display:block;font-size:12.5px;font-weight:600;color:var(--dim);margin-bottom:6px}
+  .field input,.field select,.field textarea{
+    width:100%;padding:12px 14px;border-radius:13px;font-size:14.5px;color:var(--text);
+    background:var(--surface);border:1px solid var(--line);outline:none;
+  }
+  .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-soft)}
+  .field textarea{min-height:92px;resize:vertical}
+  .field .hint{font-size:11.5px;color:var(--faint);margin-top:5px}
+  .field .err{font-size:12px;color:var(--red);margin-top:5px;display:none}
+  .field.has-err .err{display:block}
+  .field.has-err input{border-color:var(--red)}
+
+  /* Badges & chips */
+  .chip{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:99px;font-size:11.5px;font-weight:700}
+  .chip.gold{background:var(--gold-soft);color:var(--gold-2);border:1px solid rgba(233,193,95,.25)}
+  .chip.violet{background:var(--violet-soft);color:#c0adff;border:1px solid rgba(139,107,255,.25)}
+  .chip.green{background:rgba(74,222,128,.12);color:var(--green);border:1px solid rgba(74,222,128,.25)}
+  .chip.red{background:rgba(255,107,107,.12);color:var(--red);border:1px solid rgba(255,107,107,.25)}
+  .chip.amber{background:rgba(251,191,36,.12);color:var(--amber);border:1px solid rgba(251,191,36,.25)}
+  .chip.muted{background:var(--surface-2);color:var(--dim);border:1px solid var(--line)}
+
+  .note{
+    margin-top:10px;padding:12px 14px;border-radius:14px;font-size:12.5px;line-height:1.5;color:var(--dim);
+    background:var(--surface);border:1px dashed var(--line);
+  }
+  .note strong{color:var(--text)}
+  .note.warn{border-color:rgba(251,191,36,.3);background:rgba(251,191,36,.06)}
+
+  /* Segmented / filter */
+  .chips{display:flex;gap:8px;overflow-x:auto;padding:2px 0 10px;scrollbar-width:none}
+  .chips::-webkit-scrollbar{display:none}
+  .chips .chip{cursor:pointer;white-space:nowrap;flex-shrink:0}
+  .chips .chip.active{background:var(--gold-soft);color:var(--gold-2);border-color:var(--gold)}
+
+  /* Steps */
+  .steps{display:flex;gap:8px;margin-bottom:18px}
+  .step{flex:1;height:5px;border-radius:99px;background:var(--surface-2);overflow:hidden}
+  .step.on{background:linear-gradient(90deg,var(--gold),var(--violet))}
+
+  /* Fee summary */
+  .fee-box{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px;margin-top:6px}
+  .fee-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;font-size:14px}
+  .fee-row .lbl{color:var(--dim)}
+  .fee-row .val{font-weight:700}
+  .fee-row.total{border-top:1px solid var(--line);margin-top:6px;padding-top:12px}
+  .fee-row.total .val{color:var(--gold-2);font-size:16px}
+
+  /* Modals */
+  .modal-backdrop{
+    position:fixed;inset:0;z-index:80;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);
+    display:flex;align-items:flex-end;justify-content:center;animation:fade .18s ease;
+  }
+  @media(min-width:520px){.modal-backdrop{align-items:center}}
+  .modal{
+    width:100%;max-width:480px;max-height:88vh;overflow-y:auto;
+    background:var(--bg-2);border:1px solid var(--line);border-radius:22px 22px 0 0;
+    padding:20px 18px calc(20px + var(--safe-b));animation:slide .24s ease;
+  }
+  @media(min-width:520px){.modal{border-radius:22px}}
+  @keyframes slide{from{transform:translateY(30px);opacity:0}to{transform:none;opacity:1}}
+  .modal .m-title{font-size:17px;font-weight:800;margin-bottom:6px;display:flex;align-items:center;justify-content:space-between}
+  .modal .m-close{width:32px;height:32px;border-radius:10px;border:none;background:var(--surface);color:var(--dim);font-size:16px}
+  .modal .m-sub{font-size:13px;color:var(--dim);margin-bottom:16px;line-height:1.5}
+
+  /* Toasts */
+  .toasts{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(var(--nav-h) + 16px + var(--safe-b));z-index:90;display:flex;flex-direction:column;gap:8px;width:min(92vw,420px);pointer-events:none}
+  .toast{
+    background:var(--surface-2);border:1px solid var(--line);border-radius:14px;
+    padding:12px 16px;font-size:13.5px;box-shadow:var(--shadow);
+    display:flex;align-items:center;gap:10px;animation:slide .22s ease;
+  }
+  .toast .dot{width:8px;height:8px;border-radius:50%;background:var(--gold);box-shadow:0 0 10px var(--gold)}
+
+  /* Bottom nav */
+  nav.bottom{
+    flex-shrink:0;display:flex;height:calc(var(--nav-h) + var(--safe-b));padding-bottom:var(--safe-b);
+    background:rgba(15,15,22,.88);backdrop-filter:blur(16px);border-top:1px solid var(--line);
+  }
+  .nav-btn{
+    flex:1;background:none;border:none;color:var(--faint);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+    font-size:11px;font-weight:600;position:relative;
+    transition:color .15s;
+  }
+  .nav-btn .ic{font-size:22px;line-height:1;filter:grayscale(.4);opacity:.75}
+  .nav-btn.active{color:var(--gold-2)}
+  .nav-btn.active .ic{filter:none;opacity:1;transform:translateY(-1px)}
+  .nav-btn.active::before{content:"";position:absolute;top:0;width:26px;height:3px;border-radius:0 0 99px 99px;background:linear-gradient(90deg,var(--gold),var(--violet))}
+  .nav-btn:focus-visible{outline:2px solid var(--gold);outline-offset:-2px}
+
+  /* Admin login page */
+  .admin-wrap{min-height:100vh;max-width:480px;margin:0 auto;padding:0 16px 30px}
+  .admin-wrap header{padding-top:40px;text-align:center;margin-bottom:28px}
+  .admin-wrap header .logo{margin:0 auto 14px}
+  .admin-wrap header h1{font-size:22px;font-weight:800}
+  .admin-wrap header p{color:var(--dim);font-size:13px;margin-top:6px}
+  .admin-login{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:22px}
+
+  .admin-dash{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .admin-card{
+    border-radius:16px;padding:16px;background:var(--surface);border:1px solid var(--line);
+    cursor:pointer;transition:transform .1s,background .15s;
+  }
+  .admin-card:active{transform:scale(.97)}
+  .admin-card .ic{font-size:24px;margin-bottom:8px}
+  .admin-card .t{font-size:14px;font-weight:700}
+  .admin-card .s{font-size:11.5px;color:var(--dim);margin-top:3px}
+
+  .admin-item{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--surface);border:1px solid var(--line);border-radius:14px;margin-bottom:10px}
+  .admin-item .info{flex:1;min-width:0}
+  .admin-item .info .t{font-size:14px;font-weight:700}
+  .admin-item .info .s{font-size:12px;color:var(--dim);margin-top:2px}
+  .admin-item .acts{display:flex;gap:6px}
+  .mini-btn{width:34px;height:34px;border-radius:10px;border:1px solid var(--line);background:var(--surface-2);color:var(--dim);font-size:15px;display:grid;place-items:center}
+  .mini-btn.danger:active{background:rgba(255,107,107,.18);color:var(--red)}
+</style>
+</head>
+<body>
+  <div class="app" id="app">
+    <header class="topbar" id="topbar">
+      <button class="back-btn" id="backBtn" aria-label="Назад">‹</button>
+      <div class="brand">
+        <div class="logo">R</div>
+        <h1>ROOBY<span> Market</span></h1>
+      </div>
+      <div class="spacer"></div>
+      <button class="icon-btn" id="headerAction" aria-label="Действие" style="display:none">⋯</button>
+    </header>
+
+    <main class="content" id="content">
+      <!-- ============ HOME ============ -->
+      <section class="screen" id="screen-home"></section>
+
+      <!-- ============ ORDERS ============ -->
+      <section class="screen" id="screen-orders" hidden></section>
+
+      <!-- ============ CREATE ============ -->
+      <section class="screen" id="screen-create" hidden></section>
+
+      <!-- ============ PROFILE ============ -->
+      <section class="screen" id="screen-profile" hidden></section>
+
+      <!-- ============ DRAWING ============ -->
+      <section class="screen" id="screen-drawing" hidden></section>
+
+      <!-- ============ GUARANTOR ============ -->
+      <section class="screen" id="screen-guarantor" hidden></section>
+
+      <!-- ============ MANUALS ============ -->
+      <section class="screen" id="screen-manuals" hidden></section>
+
+      <!-- ============ EDUCATION ============ -->
+      <section class="screen" id="screen-education" hidden></section>
+
+      <!-- ============ PLATFORMS ============ -->
+      <section class="screen" id="screen-platforms" hidden></section>
+
+      <!-- ============ DROPOVODS ============ -->
+      <section class="screen" id="screen-dropovods" hidden></section>
+    </main>
+
+    <nav class="bottom" id="bottomnav">
+      <button class="nav-btn active" data-nav="home"><span class="ic">🏠</span>Главная</button>
+      <button class="nav-btn" data-nav="orders"><span class="ic">📦</span>Мои заказы</button>
+      <button class="nav-btn" data-nav="create"><span class="ic">➕</span>Создать</button>
+      <button class="nav-btn" data-nav="profile"><span class="ic">👤</span>Профиль</button>
+    </nav>
+  </div>
+
+  <!-- Admin panel (separate, reached via #admin) -->
+  <div id="adminPanel" style="display:none"></div>
+
+  <div class="toasts" id="toasts"></div>
+  <div id="modalRoot"></div>
+
+<script>
+/* =====================================================================
+   ROOBY Market — frontend demo. No backend, no real payments, no secrets.
+   Data is demo-only and stored in localStorage solely to illustrate UX.
+   ===================================================================== */
+
+/* ---------- Telegram WebApp SDK ---------- */
+(function(){
+  const url = 'https://telegram.org/js/telegram-web-app.js';
+  const s = document.createElement('script');
+  s.async = true; s.src = url;
+  document.head.appendChild(s);
+})();
+
+function getTgUser(){
+  try{
+    const u = (window.Telegram && Telegram.WebApp && Telegram.WebApp.initDataUnsafe && Telegram.WebApp.initDataUnsafe.user);
+    if(u){
+      return {
+        id: u.id,
+        username: u.username || null,
+        first: u.first_name || 'Пользователь',
+        source: 'telegram'
+      };
+    }
+  }catch(e){}
+  // Demo fallback when not running inside Telegram
+  return { id: '123456789', username: 'demo_user', first: 'Демо Пользователь', source: 'demo' };
+}
+
+const USER = getTgUser();
+
+/* ---------- Default demo state ---------- */
+function defaults(){
+  return {
+    adminLogged: { in: false, login: 'admin', pass: 'demo' }, // demo only — not real auth
+    manualAccess: false,
+    activatedCode: null,
+    demoCode: 'ROOBY-DEMO',
+
+    support: 'rooby_support',       // demo contact
+    drawingContact: 'rooby_draw',   // demo contact
+    trainingContact: 'rooby_mentor',// demo contact
+    drawingPrice: '3 000 ₽',
+    directRosplatLink: '',          // admin sets it; empty -> "Ссылка скоро появится"
+
+    teamLeads: [
+      { id:'tl1', name:'Алексей', username:'rooby_tl_alex', spec:'Т-Банк', bio:'Специализация — обучение и подключение по Т-Банку. Описание и опыт редактируются администратором. (демо)' },
+      { id:'tl2', name:'Мария', username:'rooby_tl_maria', spec:'Маркетплейсы', bio:'Специализация — маркетплейсы и дроп-схемы. Информация обновляется администратором. (демо)' },
+      { id:'tl3', name:'Дмитрий', username:'rooby_tl_dima', spec:'Гарант + документооборот', bio:'Специализация — сопровождение сделок. (демо)' }
+    ],
+    guarantors: [
+      { id:'g1', name:'Гарант ROOBY', username:'rooby_guarantor', assigned:true },
+      { id:'g2', name:'Резервный гарант', username:'rooby_guarantor_2', assigned:false }
+    ],
+    dropovods: {
+      'Москва': [ { id:'d1', name:'Демо-дроп МСК', username:'rooby_drop_msk', desc:'Приём и пересылка по Москве. (демо-контакт, пример)' } ],
+      'Санкт-Петербург': [ { id:'d2', name:'Демо-дроп СПб', username:'rooby_drop_spb', desc:'Приём и пересылка по Санкт-Петербургу. (демо-контакт, пример)' } ],
+      'Казань': [ { id:'d3', name:'Демо-дроп КЗН', username:'rooby_drop_kzn', desc:'Приём и пересылка по Казани. (демо-контакт, пример)' } ]
+    },
+    cities: ['Москва','Санкт-Петербург','Казань','Екатеринбург','Новосибирск','Краснодар','Нижний Новгород','Самара','Ростов-на-Дону','Уфа','Пермь','Челябинск','Воронеж','Волгоград','Красноярск','Омск','Тюмень','Иркутск','Владивосток'],
+
+    accessCodes: [
+      { code:'ROOBY-DEMO', used:false }
+    ],
+
+    manuals: [
+      { name:'СберБанк', ready:true },
+      { name:'ВТБ', ready:false },
+      { name:'Альфа-Банк', ready:true },
+      { name:'Т-Банк', ready:true },
+      { name:'Газпромбанк', ready:false },
+      { name:'ПСБ', ready:false },
+      { name:'Россельхозбанк', ready:false },
+      { name:'Совкомбанк', ready:false },
+      { name:'Московский кредитный банк (МКБ)', ready:false },
+      { name:'Банк ДОМ.РФ', ready:false },
+      { name:'Ozon Банк', ready:true },
+      { name:'МТС Банк', ready:false },
+      { name:'Банк «Санкт-Петербург»', ready:false },
+      { name:'Точка', ready:false },
+      { name:'ОТП Банк', ready:false },
+      { name:'Уралсиб', ready:false },
+      { name:'Русский Стандарт', ready:false },
+      { name:'Ак Барс Банк', ready:false },
+      { name:'Банк Синара', ready:false },
+      { name:'Яндекс Банк', ready:false }
+    ],
+
+    tariffs: [
+      { id:'t1', title:'Обучение процессингу и P2P', price:'7 000 ₽', tag:'Старт', desc:'Базовый курс по процессингу и P2P: структура, термины, первые шаги. Подходит для новичков.' },
+      { id:'t2', title:'Обучение по звонку', price:'12 000 ₽', tag:'Популярно', desc:'Обучение процессингу и P2P в формате живого звонка — разбор вопросов и практика с наставником.' },
+      { id:'t3', title:'Полное обучение', price:'15 000 ₽', tag:'Продвинутый', desc:'Процессинг и P2P, добавление в группу и личное сопровождение на всех этапах.' }
+    ],
+
+    orders: [
+      { id:'#1001', title:'Отрисовка — Альфа-Банк', seller:'rooby_draw', price:'3 000 ₽', status:'done' },
+      { id:'#1002', title:'Мануал — Т-Банк', seller:'rooby_shop', price:'$100', status:'pending' },
+      { id:'#1003', title:'Обучение — Полное', seller:'rooby_mentor', price:'15 000 ₽', status:'failed' }
+    ],
+
+    moderation: [
+      { id:'m1', title:'Услуга по процессингу', desc:'Помощь с настройкой (демо-заявка).', price:'5 000 ₽', status:'pending' }
+    ],
+
+    categories: {
+      drawing: {visible:true},
+      guarantor:{visible:true},
+      manuals:{visible:true},
+      education:{visible:true},
+      platforms:{visible:true},
+      dropovods:{visible:true}
+    }
+  };
+}
+
+const LS_KEY = 'rooby_market_state_v1';
+let state = loadState();
+
+function loadState(){
+  try{
+    const raw = localStorage.getItem(LS_KEY);
+    if(raw){
+      const parsed = JSON.parse(raw);
+      const d = defaults();
+      for(const k in d){ if(!(k in parsed)) parsed[k] = d[k]; }
+      return parsed;
+    }
+  }catch(e){}
+  return defaults();
+}
+function saveState(){
+  try{ localStorage.setItem(LS_KEY, JSON.stringify(state)); }catch(e){}
+  // Note: localStorage is NOT a database / not secure / no cross-device sync.
+}
+
+/* ---------- Helpers ---------- */
+const $ = (s, r) => (r||document).querySelector(s);
+const $$ = (s, r) => Array.from((r||document).querySelectorAll(s));
+function esc(str){ return String(str==null?'':str).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function fmt(n){ return Number(n||0).toLocaleString('ru-RU'); }
+function monogram(name){
+  const w = String(name).trim().split(/\s+/);
+  if(w.length===1) return w[0].slice(0,2).toUpperCase();
+  return (w[0][0]+w[1][0]).toUpperCase();
+}
+function isTgUsername(u){ return !!u && /^[a-zA-Z][a-zA-Z0-9_]{3,31}$/.test(u); }
+function tgLink(u){ return isTgUsername(u) ? 'https://t.me/'+u : null; }
+
+let toastTimer = [];
+function toast(msg){
+  const box = $('#toasts');
+  const el = document.createElement('div');
+  el.className = 'toast';
+  el.innerHTML = '<span class="dot"></span><span>'+esc(msg)+'</span>';
+  box.appendChild(el);
+  setTimeout(()=>{ el.style.opacity='0'; el.style.transition='opacity .3s'; setTimeout(()=>el.remove(),300); }, 2600);
+}
+
+/* Generic contact open — opens Telegram only if username looks valid */
+function openContact(username, label){
+  const link = tgLink(username);
+  if(link){
+    // safe external link via rel/noopener
+    const a = document.createElement('a');
+    a.href = link; a.target = '_blank'; a.rel = 'noopener noreferrer';
+    document.body.appendChild(a); a.click(); a.remove();
+  } else {
+    toast(label || 'Контакт пока не настроен');
+  }
+}
+
+/* ---------- Modal ---------- */
+function openModal(html){
+  const root = $('#modalRoot');
+  root.innerHTML = '<div class="modal-backdrop" data-close><div class="modal" role="dialog" aria-modal="true">'+html+'</div></div>';
+  root.querySelector('.modal-backdrop').addEventListener('click', e => {
+    if(e.target.dataset.close || e.target.classList.contains('modal-backdrop')) closeModal();
+  });
+  $$('.m-close', root).forEach(b => b.addEventListener('click', closeModal));
+}
+function closeModal(){ $('#modalRoot').innerHTML = ''; }
+document.addEventListener('keydown', e => { if(e.key==='Escape'){ closeModal(); } });
+
+/* ---------- Navigation ---------- */
+const NAV = { home:'screen-home', orders:'screen-orders', create:'screen-create', profile:'screen-profile' };
+const SUB = ['screen-drawing','screen-guarantor','screen-manuals','screen-education','screen-platforms','screen-dropovods'];
+
+let current = 'screen-home';
+const stack = [];
+
+function showScreen(id){
+  $$('.screen').forEach(s => s.hidden = true);
+  const el = $('#'+id);
+  if(el) el.hidden = false;
+  current = id;
+
+  const isSub = SUB.includes(id);
+  $('#backBtn').classList.toggle('show', isSub);
+  $('#bottomnav').style.display = isSub ? 'none' : 'flex';
+
+  // highlight nav
+  const navId = Object.keys(NAV).find(k => NAV[k]===id);
+  $$('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.nav === navId));
+
+  $('#content').scrollTop = 0;
+  render(id);
+}
+
+function go(id){ stack.push(current); showScreen(id); }
+function back(){
+  if(stack.length){ showScreen(stack.pop()); }
+  else showScreen('screen-home');
+}
+
+$('#backBtn').addEventListener('click', back);
+
+$$('.nav-btn').forEach(b => b.addEventListener('click', () => {
+  showScreen(NAV[b.dataset.nav]);
+}));
+
+/* ---------- RENDERERS ---------- */
+function render(id){
+  switch(id){
+    case 'screen-home': renderHome(); break;
+    case 'screen-orders': renderOrders(); break;
+    case 'screen-create': renderCreate(); break;
+    case 'screen-profile': renderProfile(); break;
+    case 'screen-drawing': renderDrawing(); break;
+    case 'screen-guarantor': renderGuarantor(); break;
+    case 'screen-manuals': renderManuals(); break;
+    case 'screen-education': renderEducation(); break;
+    case 'screen-platforms': renderPlatforms(); break;
+    case 'screen-dropovods': renderDropovods(); break;
+  }
+}
+
+const CATEGORIES = [
+  { id:'drawing', ic:'🎨', nm:'Отрисовка' },
+  { id:'guarantor', ic:'🛡️', nm:'Гарант' },
+  { id:'manuals', ic:'📚', nm:'Мануалы' },
+  { id:'education', ic:'🎓', nm:'Обучение' },
+  { id:'platforms', ic:'🔌', nm:'Подключение к площадкам' },
+  { id:'dropovods', ic:'📦', nm:'Дроповоды' }
+];
+
+let homeQuery = '';
+function renderHome(){
+  const el = $('#screen-home');
+  const name = USER.source==='telegram' ? ('@'+USER.username) : USER.first;
+
+  const cats = CATEGORIES.filter(c => state.categories[c.id].visible)
+    .filter(c => !homeQuery || c.nm.toLowerCase().includes(homeQuery.toLowerCase()));
+
+  let catHtml = cats.length
+    ? '<div class="cat-grid">' + cats.map(c =>
+        '<div class="cat-card" tabindex="0" role="button" data-goto="screen-'+c.id+'">'+
+          '<span class="ic">'+c.ic+'</span>'+
+          '<span class="nm">'+esc(c.nm)+'</span>'+
+        '</div>').join('') + '</div>'
+    : '<div class="empty"><div class="ic">🔍</div><div class="t">Ничего не найдено</div><div class="s">Попробуйте другой запрос</div></div>';
+
+  const linkReady = state.directRosplatLink && /^https?:\/\//.test(state.directRosplatLink);
+
+  el.innerHTML =
+    '<div class="hero">'+
+      '<h2>Привет, <span class="u">'+esc(name)+'</span>!</h2>'+
+      '<p>ROOBY Market — маркетплейс услуг и материалов: отрисовка, гарант, мануалы, обучение и подключение к площадкам.</p>'+
+    '</div>'+
+
+    '<div class="search"><span class="mag">🔍</span>'+
+      '<input type="search" id="homeSearch" placeholder="Найти услугу или материал…" value="'+esc(homeQuery)+'" aria-label="Найти услугу или материал">'+
+    '</div>'+
+
+    '<div class="section-title">Категории</div>'+
+    catHtml +
+
+    '<div class="cta-card" tabindex="0" role="button" id="directRosplat">'+
+      '<span class="ic">🔗</span>'+
+      '<div>'+
+        '<div class="t">Прямое подключение к Rosplat</div>'+
+        '<div class="s">'+(linkReady ? 'Нажмите, чтобы перейти' : 'Ссылка скоро появится')+'</div>'+
+      '</div>'+
+      '<span class="go">›</span>'+
+    '</div>';
+
+  $('#homeSearch').addEventListener('input', e => {
+    homeQuery = e.target.value;
+    renderHome();
+    $('#homeSearch').focus();
+  });
+
+  // category clicks
+  $$('#screen-home [data-goto]').forEach(el => {
+    el.addEventListener('click', () => go(el.dataset.goto));
+    el.addEventListener('keydown', e => { if(e.key==='Enter' || e.key===' '){ e.preventDefault(); go(el.dataset.goto); } });
+  });
+
+  // direct link
+  $('#directRosplat').addEventListener('click', () => {
+    const link = state.directRosplatLink;
+    if(link && /^https?:\/\//.test(link)){
+      window.open(link, '_blank', 'noopener,noreferrer');
+    } else {
+      toast('Ссылка скоро появится');
+    }
+  });
+  $('#directRosplat').addEventListener('keydown', e => { if(e.key==='Enter'){ $('#directRosplat').click(); } });
+}
+
+/* ---------- Drawing ---------- */
+const DRAW_BANKS = ['Альфа-Банк','Т-Банк','Ozon Банк'];
+function renderDrawing(){
+  const el = $('#screen-drawing');
+  const link = tgLink(state.drawingContact);
+  el.innerHTML =
+    '<div class="section-title">Карточки банков</div>'+
+    '<div class="note">Стоимость одинакова для всех банков: <strong>'+esc(state.drawingPrice)+'</strong> или <strong>$35</strong>.</div>'+
+    DRAW_BANKS.map((b,i) =>
+      '<div class="list-card">'+
+        '<div class="avatar '+(i===2?'green':'')+'">'+monogram(b)+'</div>'+
+        '<div class="info"><div class="t">'+esc(b)+'</div><div class="s">Карточка услуги · '+esc(state.drawingPrice)+' / $35</div></div>'+
+      '</div>').join('')+
+
+    '<div class="section-title">Контакт</div>'+
+    '<div class="list-card">'+
+      '<div class="avatar violet">'+monogram(state.drawingContact || '?')+'</div>'+
+      '<div class="info">'+
+        '<div class="t">@'+esc(state.drawingContact)+'</div>'+
+        '<div class="s">Владелец / ответственный по разделу «Отрисовка»</div>'+
+      '</div>'+
+    '</div>'+
+    '<div class="note">Указан <strong>демонстрационный</strong> ник-пример; настоящий контакт задаёт администратор.</div>'+
+    '<div class="btn-row">'+
+      '<button class="btn primary block" id="drawContactBtn">✉️ Написать</button>'+
+    '</div>'+
+    '<div class="note">Это карточка услуги с описанием, ценой и контактом. Фактическое содержание услуги администратор задаёт отдельно и законно.</div>';
+
+  $('#drawContactBtn').addEventListener('click', () => openContact(state.drawingContact, 'Контакт пока не настроен'));
+}
+
+/* ---------- Guarantor ---------- */
+let guarStep = 1;
+let guarAmount = '';
+let guarPeer = '';
+let guarSelected = null;
+
+function renderGuarantor(){
+  const el = $('#screen-guarantor');
+  const fee = guarAmount ? Math.round(parseFloat(guarAmount)*0.05) : null;
+  const selectedG = state.guarantors.find(g => g.id === guarSelected) || state.guarantors.find(g => g.assigned) || state.guarantors[0];
+
+  let html = '<div class="section-title">Оформление сделки · демо</div>'+
+    '<div class="steps">'+[1,2,3,4].map(s => '<div class="step '+(s<=guarStep?'on':'')+'"></div>').join('')+'</div>';
+
+  if(guarStep === 1){
+    html +=
+      '<p style="color:var(--dim);font-size:13.5px;margin-bottom:14px">Шаг 1. Укажите сумму сделки</p>'+
+      '<div class="field"><label for="guarAmount">Сумма сделки, ₽</label>'+
+        '<input type="number" id="guarAmount" inputmode="numeric" min="1" value="'+esc(guarAmount)+'" placeholder="Например, 5 000">'+
+      '</div>'+
+      '<div class="btn-row"><button class="btn primary block" id="guarNext1">Продолжить</button></div>';
+  }
+  else if(guarStep === 2){
+    html +=
+      '<p style="color:var(--dim);font-size:13.5px;margin-bottom:14px">Шаг 2. Расчёт комиссии гаранта (5%)</p>'+
+      '<div class="fee-box">'+
+        '<div class="fee-row"><span class="lbl">Сумма сделки</span><span class="val">'+fmt(guarAmount)+' ₽</span></div>'+
+        '<div class="fee-row"><span class="lbl">Комиссия гаранта (5%)</span><span class="val">'+fmt(fee)+' ₽</span></div>'+
+        '<div class="fee-row total"><span class="lbl">Итого к переводу продавцу</span><span class="val">'+fmt(guarAmount - fee)+' ₽</span></div>'+
+      '</div>'+
+      '<div class="note warn">Комиссия рассчитывается как 5% от суммы. Для 5 000 ₽ комиссия — <strong>250 ₽</strong>. Хранение средств и эскроу здесь не реализовано.</div>'+
+      '<div class="btn-row"><button class="btn ghost block" id="guarBack2">Назад</button><button class="btn primary block" id="guarNext2">Продолжить</button></div>';
+  }
+  else if(guarStep === 3){
+    html +=
+      '<p style="color:var(--dim);font-size:13.5px;margin-bottom:14px">Шаг 3. Второй участник сделки</p>'+
+      '<div class="field"><label for="guarPeer">Telegram-ник второго участника</label>'+
+        '<input type="text" id="guarPeer" value="'+esc(guarPeer)+'" placeholder="@username">'+
+      '</div>'+
+      '<div class="field"><label for="guarSel">Назначенный гарант</label>'+
+        '<select id="guarSel">'+
+          state.guarantors.map(g => '<option value="'+g.id+'" '+(g.id===(selectedG&&selectedG.id)?'selected':'')+'>'+esc(g.name)+'</option>').join('')+
+        '</select>'+
+        '<div class="hint">Гарант назначается администратором. Демо-выбор для показа сценария.</div>'+
+      '</div>'+
+      '<div class="btn-row"><button class="btn ghost block" id="guarBack3">Назад</button><button class="btn primary block" id="guarNext3">Продолжить</button></div>';
+  }
+  else {
+    html +=
+      '<p style="color:var(--dim);font-size:13.5px;margin-bottom:14px">Шаг 4. Подтверждение</p>'+
+      '<div class="fee-box">'+
+        '<div class="fee-row"><span class="lbl">Создатель сделки</span><span class="val">'+esc(USER.source==='telegram'||USER.username ? '@'+USER.username : USER.first)+'</span></div>'+
+        '<div class="fee-row"><span class="lbl">Второй участник</span><span class="val">'+esc(guarPeer || '—')+'</span></div>'+
+        '<div class="fee-row"><span class="lbl">Гарант</span><span class="val">'+esc(selectedG?selectedG.name:'—')+'</span></div>'+
+        '<div class="fee-row total"><span class="lbl">Сумма сделки</span><span class="val">'+fmt(guarAmount)+' ₽</span></div>'+
+        '<div class="fee-row"><span class="lbl">Комиссия (5%)</span><span class="val">'+fmt(fee)+' ₽</span></div>'+
+      '</div>'+
+      '<div class="note warn">Предполагается отдельная группа для каждой сделки. <strong>Создание группы пока демонстрационное</strong> и требует отдельного Telegram-бота / серверной интеграции.</div>'+
+      '<div class="btn-row"><button class="btn ghost block" id="guarBack4">Назад</button><button class="btn primary block" id="guarConfirm">Подтвердить (демо)</button></div>';
+  }
+
+  el.innerHTML = html;
+
+  function bind(id, fn){ const b = $('#'+id); if(b) b.addEventListener('click', fn); }
+
+  bind('guarNext1', () => {
+    const v = $('#guarAmount').value.trim();
+    if(!v || parseFloat(v) <= 0){ toast('Введите корректную сумму'); return; }
+    guarAmount = v; guarStep = 2; renderGuarantor();
+  });
+  bind('guarNext2', () => { guarStep = 3; renderGuarantor(); });
+  bind('guarNext3', () => {
+    const p = $('#guarPeer').value.trim();
+    guarPeer = p.replace(/^@/,'');
+    guarSelected = $('#guarSel').value;
+    guarStep = 4; renderGuarantor();
+  });
+  bind('guarBack2', () => { guarStep = 1; renderGuarantor(); });
+  bind('guarBack3', () => { guarStep = 2; renderGuarantor(); });
+  bind('guarBack4', () => { guarStep = 3; renderGuarantor(); });
+  bind('guarConfirm', () => {
+    toast('Демо-сделка оформлена (группа не создаётся)');
+    guarStep = 1; guarAmount=''; guarPeer=''; guarSelected=null;
+    setTimeout(back, 900);
+  });
+
+  const amt = $('#guarAmount');
+  if(amt){
+    amt.addEventListener('keydown', e => { if(e.key==='Enter'){ e.preventDefault(); $('#guarNext1').click(); } });
+    amt.addEventListener('input', () => { guarAmount = amt.value; });
+  }
+  const peer = $('#guarPeer');
+  if(peer) peer.addEventListener('keydown', e => { if(e.key==='Enter'){ e.preventDefault(); $('#guarNext3').click(); } });
+}
+
+/* ---------- Manuals ---------- */
+let manualQuery = '';
+function renderManuals(){
+  const el = $('#screen-manuals');
+  const hasAccess = state.manualAccess;
+
+  const list = state.manuals.filter(m => !manualQuery || m.name.toLowerCase().includes(manualQuery.toLowerCase()));
+
+  let cards = list.map(m =>
+    '<div class="list-card">'+
+      '<div class="avatar ghost">'+monogram(m.name)+'</div>'+
+      '<div class="info">'+
+        '<div class="t">'+esc(m.name)+'</div>'+
+        '<div class="s">'+ (m.ready ? 'Материалы доступны' : 'Материалы скоро появятся') + (hasAccess ? ' · бесплатный доступ' : '') +'</div>'+
+      '</div>'+
+      (m.ready && !hasAccess ? '<button class="btn small violet" data-buy="'+esc(m.name)+'">Купить $100</button>' : '')+
+      (m.ready && hasAccess ? '<span class="chip green">✓</span>' : '')+
+    '</div>'
+  ).join('');
+
+  if(!list.length) cards = '<div class="empty"><div class="ic">🔍</div><div class="t">Ничего не найдено</div></div>';
+
+  el.innerHTML =
+    '<div class="section-title">Доступ к мануалам</div>'+
+    (!hasAccess
+      ? '<div class="search"><span class="mag">🔑</span>'+
+          '<input type="text" id="codeInput" placeholder="Введите код доступа" aria-label="Код доступа">'+
+        '</div>'+
+        '<div class="btn-row"><button class="btn primary block" id="activateBtn">Активировать</button></div>'+
+        '<div class="note">Без активации доступ к мануалу — <strong>$100</strong>. Одноразовые коды выдаёт администратор. Код и доступ хранятся <strong>только локально</strong> и не являются защищённой системой: настоящие коды требуют backend и серверной проверки.</div>'
+      : '<div class="chip green" style="margin-bottom:10px">✓ Доступ активирован · бесплатно</div>'+
+        '<div class="note">Доступ активирован демо-кодом. Это лишь локальная демонстрация, без серверной валидации.</div>')+
+
+    '<div class="section-title" style="margin-top:20px">Банки</div>'+
+    '<div class="search"><span class="mag">🔍</span>'+
+      '<input type="search" id="manualSearch" placeholder="Найти банк…" value="'+esc(manualQuery)+'">'+
+    '</div>'+
+    cards;
+
+  const codeInput = $('#codeInput');
+  const activateBtn = $('#activateBtn');
+  if(activateBtn){
+    activateBtn.addEventListener('click', () => {
+      const code = (codeInput ? codeInput.value.trim() : '');
+      const match = state.accessCodes.find(c => c.code === code);
+      if(!code){ toast('Введите код доступа'); return; }
+      if(match && !match.used){
+        match.used = true;
+        state.manualAccess = true;
+        state.activatedCode = code;
+        saveState();
+        toast('✓ Доступ активирован');
+        renderManuals();
+      } else if(match && match.used){
+        toast('Этот код уже использован');
+      } else {
+        toast('Неверный код. Демо-код: ROOBY-DEMO');
+      }
+    });
+    if(codeInput) codeInput.addEventListener('keydown', e => { if(e.key==='Enter') activateBtn.click(); });
+  }
+
+  $('#manualSearch').addEventListener('input', e => { manualQuery = e.target.value; renderManuals(); $('#manualSearch').focus(); });
+
+  $$('#screen-manuals [data-buy]').forEach(b => b.addEventListener('click', () => {
+    toast('Покупка мануала «'+b.dataset.buy+'» — демо (оплата не подключена)');
+  }));
+}
+
+/* ---------- Education ---------- */
+function renderEducation(){
+  const el = $('#screen-education');
+  el.innerHTML =
+    '<div class="section-title">Тарифы обучения</div>'+
+    state.tariffs.map(t =>
+      '<div class="list-card" style="flex-direction:column;align-items:stretch">'+
+        '<div style="display:flex;align-items:center;gap:14px">'+
+          '<div class="avatar">'+monogram(t.title)+'</div>'+
+          '<div class="info">'+
+            '<div style="display:flex;align-items:center;gap:8px"><span class="t">'+esc(t.title)+'</span></div>'+
+            '<div class="s">'+esc(t.desc)+'</div>'+
+          '</div>'+
+        '</div>'+
+        '<div style="display:flex;align-items:center;gap:10px;margin-top:12px">'+
+          '<span class="price" style="font-size:17px">'+esc(t.price)+'</span>'+
+          '<span class="chip gold">'+esc(t.tag)+'</span>'+
+        '</div>'+
+        '<div class="btn-row" style="margin-top:10px">'+
+          '<button class="btn ghost" data-edu-detail="'+t.id+'">Подробнее</button>'+
+          '<button class="btn primary" data-edu-write="'+t.id+'">Записаться</button>'+
+        '</div>'+
+      '</div>'
+    ).join('')+
+
+    '<div class="note">Все три тарифа используют <strong>один общий контакт</strong>: <strong>@'+esc(state.trainingContact)+'</strong> (демо-ник, заменит администратор). Оплата и выдача доступа пока не настоящие.</div>';
+
+  $$('#screen-education [data-edu-detail]').forEach(b => b.addEventListener('click', () => {
+    const t = state.tariffs.find(x => x.id===b.dataset.eduDetail);
+    openModal(
+      '<div class="m-title">'+esc(t.title)+'<button class="m-close">✕</button></div>'+
+      '<div class="m-sub">'+esc(t.desc)+'</div>'+
+      '<div class="fee-box">'+
+        '<div class="fee-row"><span class="lbl">Цена</span><span class="val">'+esc(t.price)+'</span></div>'+
+        '<div class="fee-row"><span class="lbl">Формат</span><span class="val">'+esc(t.tag)+'</span></div>'+
+      '</div>'+
+      '<div class="note">Платежи и выдача доступа не настоящие. Запись — через общий контакт поддержки.</div>'
+    );
+  }));
+
+  $$('#screen-education [data-edu-write]').forEach(b => b.addEventListener('click', () => {
+    openContact(state.trainingContact, 'Контакты курса пока не настроены');
+  }));
+}
+
+/* ---------- Platforms ---------- */
+function renderPlatforms(){
+  const el = $('#screen-platforms');
+  const linkReady = state.directRosplatLink && /^https?:\/\//.test(state.directRosplatLink);
+
+  el.innerHTML =
+    '<div class="section-title">Подключение к Rosplat</div>'+
+    '<div class="note">Выберите Team Lead или подключитесь напрямую. Прямое подключение (без Team Lead) — отдельная опция на главной.</div>'+
+
+    '<div class="section-title">Team Lead</div>'+
+    state.teamLeads.map(t =>
+      '<div class="list-card" style="flex-direction:column;align-items:stretch">'+
+        '<div style="display:flex;align-items:center;gap:14px">'+
+          '<div class="avatar violet">'+monogram(t.name)+'</div>'+
+          '<div class="info">'+
+            '<div class="t">'+esc(t.name)+' · @'+esc(t.username)+'</div>'+
+            '<div class="s">'+esc(t.spec)+'</div>'+
+          '</div>'+
+        '</div>'+
+        '<p style="font-size:12.5px;color:var(--dim);margin:10px 0 2px;line-height:1.5">'+esc(t.bio)+'</p>'+
+        '<div class="btn-row" style="margin-top:10px">'+
+          '<button class="btn ghost" data-tl-detail="'+t.id+'">Подробнее</button>'+
+          '<button class="btn violet" data-tl-select="'+t.id+'">Выбрать Team Lead</button>'+
+        '</div>'+
+      '</div>'
+    ).join('')+
+
+    '<div class="section-title">Прямое подключение</div>'+
+    '<div class="cta-card" id="platDirect" role="button" tabindex="0">'+
+      '<span class="ic">🔗</span>'+
+      '<div><div class="t">Прямое подключение к Rosplat</div>'+
+      '<div class="s">'+(linkReady ? 'Перейти к регистрации' : 'Ссылка скоро появится')+'</div></div>'+
+      '<span class="go">›</span>'+
+    '</div>'+
+    '<div class="note">Демо-данные Team Lead приведены как примеры, без выдуманных достижений реальных людей. Управление — в админ-панели.</div>';
+
+  $$('#screen-platforms [data-tl-detail]').forEach(b => b.addEventListener('click', () => {
+    const t = state.teamLeads.find(x => x.id===b.dataset.tlDetail);
+    openModal(
+      '<div class="m-title">'+esc(t.name)+'<button class="m-close">✕</button></div>'+
+      '<div class="m-sub">@'+esc(t.username)+' · '+esc(t.spec)+'</div>'+
+      '<p style="font-size:14px;line-height:1.6;color:var(--text)">'+esc(t.bio)+'</p>'+
+      '<div class="btn-row"><button class="btn primary block" id="tlWrite">✉️ Написать</button></div>'
+    );
+    $('#tlWrite').addEventListener('click', () => openContact(t.username, 'Контакт пока не настроен'));
+  }));
+
+  $$('#screen-platforms [data-tl-select]').forEach(b => b.addEventListener('click', () => {
+    const t = state.teamLeads.find(x => x.id===b.dataset.tlSelect);
+    openModal(
+      '<div class="m-title">Выбран Team Lead<button class="m-close">✕</button></div>'+
+      '<div class="m-sub">'+esc(t.name)+' (@'+esc(t.username)+') — '+esc(t.spec)+'</div>'+
+      '<p style="font-size:14px;line-height:1.6">Вы выбрали Team Lead «'+esc(t.name)+'». Свяжитесь с ним для дальнейших шагов. Выбор Team Lead не обязателен для прямой регистрации.</p>'+
+      '<div class="btn-row"><button class="btn primary block" id="tlSelWrite">✉️ Написать</button></div>'
+    );
+    const w = $('#tlSelWrite'); if(w) w.addEventListener('click', () => openContact(t.username, 'Контакт пока не настроен'));
+  }));
+
+  const pd = $('#platDirect');
+  pd.addEventListener('click', () => {
+    const link = state.directRosplatLink;
+    if(link && /^https?:\/\//.test(link)) window.open(link,'_blank','noopener,noreferrer');
+    else toast('Ссылка скоро появится');
+  });
+}
+
+/* ---------- DROPOVODS ---------- */
+let dropQuery = '';
+let dropCity = null;
+function renderDropovods(){
+  const el = $('#screen-dropovods');
+
+  let cityHtml;
+  if(dropCity){
+    const contacts = state.dropovods[dropCity] || [];
+    let body;
+    if(contacts.length){
+      body = contacts.map(c =>
+        '<div class="list-card">'+
+          '<div class="avatar green">'+monogram(c.name)+'</div>'+
+          '<div class="info"><div class="t">'+esc(c.name)+' · @'+esc(c.username)+'</div>'+
+          '<div class="s">'+esc(c.desc)+'</div></div>'+
+          '<button class="btn small violet" data-drop-write="'+esc(c.username)+'">Написать</button>'+
+        '</div>').join('');
+    } else {
+      body = '<div class="empty"><div class="ic">📍</div><div class="t">Пока нет доступных контактов в этом городе</div><div class="s">Контакты добавит администратор</div></div>';
+    }
+    cityHtml =
+      '<button class="btn ghost small" style="margin-bottom:12px" id="dropBack">‹ Все города</button>'+
+      '<div class="section-title">'+esc(dropCity)+'</div>'+ body +
+      '<div class="note" style="margin-top:14px">Все контакты — <strong>демонстрационные примеры</strong>, не настоящие поставщики.</div>';
+  } else {
+    const cities = state.cities.filter(c => !dropQuery || c.toLowerCase().includes(dropQuery.toLowerCase()));
+    const list = cities.length
+      ? cities.map(c => {
+          const contacts = state.dropovods[c] || [];
+          return '<div class="list-card" data-city="'+esc(c)+'" role="button" tabindex="0">'+
+            '<div class="avatar ghost">🏙️</div>'+
+            '<div class="info"><div class="t">'+esc(c)+'</div>'+
+              '<div class="s">'+(contacts.length ? contacts.length+' контакт(ов)' : 'Контакты скоро появятся')+'</div></div>'+
+            '<span style="color:var(--faint);font-size:18px">›</span>'+
+          '</div>';
+        }).join('')
+      : '<div class="empty"><div class="ic">🔍</div><div class="t">Город не найден</div></div>';
+    cityHtml =
+      '<div class="section-title">Города</div>'+
+      '<div class="search"><span class="mag">🔍</span><input type="search" id="dropSearch" placeholder="Найти город…" value="'+esc(dropQuery)+'"></div>'+
+      list;
+  }
+
+  el.innerHTML = cityHtml;
+
+  const backBtn = $('#dropBack');
+  if(backBtn) backBtn.addEventListener('click', () => { dropCity = null; renderDropovods(); });
+
+  const ds = $('#dropSearch');
+  if(ds) ds.addEventListener('input', e => { dropQuery = e.target.value; renderDropovods(); $('#dropSearch').focus(); });
+
+  $$('#screen-dropovods [data-city]').forEach(elm => {
+    elm.addEventListener('click', () => { dropCity = elm.dataset.city; renderDropovods(); });
+    elm.addEventListener('keydown', e => { if(e.key==='Enter'){ dropCity = elm.dataset.city; renderDropovods(); } });
+  });
+
+  $$('#screen-dropovods [data-drop-write]').forEach(b => b.addEventListener('click', () => openContact(b.dataset.dropWrite, 'Контакт пока не настроен')));
+}
+
+/* ---------- Orders ---------- */
+let orderFilter = 'all';
+const ORDER_STATUS = { all:'Все', pending:'Ожидают', done:'Завершены', failed:'Не состоялись' };
+function renderOrders(){
+  const el = $('#screen-orders');
+  const list = state.orders.filter(o => orderFilter==='all' || o.status===orderFilter);
+
+  const chips = Object.keys(ORDER_STATUS).map(k =>
+    '<span class="chip '+(orderFilter===k?'active':'')+'" data-order-filter="'+k+'">'+ORDER_STATUS[k]+'</span>'
+  ).join('');
+
+  let body;
+  if(list.length){
+    body = list.map(o =>
+      '<div class="list-card">'+
+        '<div class="avatar ghost">#</div>'+
+        '<div class="info">'+
+          '<div class="t">'+esc(o.id)+' · '+esc(o.title)+'</div>'+
+          '<div class="s">Продавец: @'+esc(o.seller)+'</div>'+
+        '</div>'+
+        '<div style="text-align:right">'+
+          '<div class="price">'+esc(o.price)+'</div>'+
+          '<span class="chip '+statusChip(o.status)+'">'+ORDER_STATUS[o.status]+'</span>'+
+        '</div>'+
+      '</div>').join('');
+  } else {
+    body = '<div class="empty"><div class="ic">📦</div><div class="t">У вас пока нет заказов</div><div class="s">Здесь появятся ваши заказы</div></div>';
+  }
+
+  el.innerHTML =
+    '<div class="section-title">Мои заказы</div>'+
+    '<div class="chips">'+chips+'</div>'+
+    body +
+    '<div class="note" style="margin-top:14px">Список заказов — <strong>демонстрационный</strong>, это не реальные покупки.</div>';
+
+  $$('#screen-orders [data-order-filter]').forEach(c => c.addEventListener('click', () => {
+    orderFilter = c.dataset.orderFilter; renderOrders();
+  }));
+}
+function statusChip(s){
+  return s==='done' ? 'green' : s==='pending' ? 'amber' : 'red';
+}
+
+/* ---------- Create ---------- */
+function renderCreate(){
+  const el = $('#screen-create');
+  // categories for proposal — everything except гарант (curated by admin)
+  const opts = CATEGORIES.filter(c => c.id!=='guarantor' && state.categories[c.id].visible);
+
+  el.innerHTML =
+    '<div class="section-title">Создать предложение</div>'+
+    '<p style="color:var(--dim);font-size:13px;margin-bottom:14px">Выберите категорию и заполните демо-форму. После отправки заявка попадёт на модерацию.</p>'+
+
+    '<div class="field"><label for="crCat">Категория</label>'+
+      '<select id="crCat">'+opts.map(c => '<option value="'+c.id+'">'+c.ic+' '+esc(c.nm)+'</option>').join('')+'</select>'+
+    '</div>'+
+    '<div class="field"><label for="crTitle">Название</label><input type="text" id="crTitle" placeholder="Название услуги или материала"></div>'+
+    '<div class="field"><label for="crDesc">Описание</label><textarea id="crDesc" placeholder="Краткое описание"></textarea></div>'+
+    '<div class="field"><label for="crPrice">Цена, ₽</label><input type="number" id="crPrice" inputmode="numeric" min="0" placeholder="Например, 3 000"></div>'+
+    '<div class="field"><label for="crImg">Обложка (изображение)</label>'+
+      '<input type="file" id="crImg" accept="image/*" style="padding:10px" aria-label="Обложка">'+
+      '<div class="hint">Загрузка — визуальная демонстрация, файл никуда не отправляется.</div>'+
+    '</div>'+
+    '<button class="btn primary block" id="crSubmit" style="margin-top:6px">Отправить на модерацию</button>'+
+    '<div class="note" style="margin-top:14px">Раздел «Гарант» здесь недоступен — каталог гарантов курирует администратор.</div>';
+
+  $('#crSubmit').addEventListener('click', () => {
+    const title = $('#crTitle').value.trim();
+    const desc = $('#crDesc').value.trim();
+    const price = $('#crPrice').value.trim();
+    if(!title){ fieldErr($('#crTitle'), true); toast('Укажите название'); return; }
+    const id = 'm' + Date.now();
+    state.moderation.unshift({ id, title, desc: desc || '—', price: (price? fmt(price)+' ₽' : '—'), status:'pending', category: $('#crCat').value });
+    saveState();
+    $('#crTitle').value=''; $('#crDesc').value=''; $('#crPrice').value=''; $('#crImg').value='';
+    toast('Демо-заявка отправлена на модерацию');
+  });
+
+  const titleInput = $('#crTitle'); if(titleInput) titleInput.addEventListener('input', () => fieldErr(titleInput, false));
+}
+function fieldErr(input, on){
+  if(!input) return;
+  const f = input.closest('.field');
+  if(f) f.classList.toggle('has-err', on);
+}
+
+/* ---------- Profile ---------- */
+function renderProfile(){
+  const el = $('#screen-profile');
+  const name = USER.source==='telegram' ? ('@'+USER.username) : USER.first;
+  const balance = 0;      // demo balance
+  const spent = 18000;    // demo total spent
+  const orderCount = state.orders.length;
+
+  const ops = [
+    { t:'Демо-пополнение', v:'+ 5 000 ₽', kind:'green' },
+    { t:'Отрисовка — Альфа-Банк', v:'− 3 000 ₽', kind:'red' },
+    { t:'Мануал — Т-Банк', v:'− $100', kind:'red' }
+  ];
+
+  el.innerHTML =
+    '<div class="hero" style="margin-bottom:14px">'+
+      '<div style="display:flex;align-items:center;gap:14px">'+
+        '<div class="avatar" style="width:58px;height:58px;font-size:20px;border-radius:16px">'+monogram(name)+'</div>'+
+        '<div>'+
+          '<h2 style="font-size:18px">'+esc(name)+'</h2>'+
+          '<p style="font-size:12.5px">Telegram ID: '+esc(USER.id)+'</p>'+
+        '</div>'+
+      '</div>'+
+      '<div class="fee-box" style="margin-top:16px;background:transparent;border-color:rgba(233,193,95,.2)">'+
+        '<div class="fee-row"><span class="lbl">Баланс (демо)</span><span class="val" style="color:var(--gold-2);font-size:20px">'+fmt(balance)+' ₽</span></div>'+
+      '</div>'+
+      '<div class="btn-row">'+
+        '<button class="btn primary" id="pfTopup">Пополнить</button>'+
+        '<button class="btn ghost" id="pfWithdraw">Вывести</button>'+
+      '</div>'+
+    '</div>'+
+
+    '<div class="section-title">Статистика</div>'+
+    '<div class="cat-grid">'+
+      '<div class="cat-card"><span class="nm" style="font-size:12px;color:var(--dim)">Общая сумма расходов</span><span class="ic" style="font-size:20px;color:var(--gold-2)">'+fmt(spent)+' ₽</span></div>'+
+      '<div class="cat-card"><span class="nm" style="font-size:12px;color:var(--dim)">Заказов</span><span class="ic" style="font-size:20px;color:var(--gold-2)">'+orderCount+'</span></div>'+
+    '</div>'+
+
+    '<div class="section-title">История операций</div>'+
+    ops.map(o =>
+      '<div class="list-card">'+
+        '<div class="avatar ghost">💳</div>'+
+        '<div class="info"><div class="t">'+esc(o.t)+'</div><div class="s">демо-операция</div></div>'+
+        '<span style="font-weight:700;color:'+(o.kind==='green'?'var(--green)':'var(--text)')+'">'+esc(o.v)+'</span>'+
+      '</div>').join('')+
+
+    '<button class="btn block" id="pfSupport" style="margin:16px 0 8px">🎧 Поддержка</button>'+
+    '<div class="note">Баланс и операции — демонстрационные, реальные переводы не подключены и платёжные данные не запрашиваются.</div>';
+
+  $('#pfTopup').addEventListener('click', () => openModal(
+    '<div class="m-title">Пополнение<button class="m-close">✕</button></div>'+
+    '<div class="m-sub">Пополнение баланса пока не подключено.</div>'+
+    '<div class="note">Платежи не интегрированы. Настоящее пополнение потребует backend и платёжного провайдера.</div>'+
+    '<div class="btn-row"><button class="btn block m-close">Понятно</button></div>'
+  ));
+  $('#pfWithdraw').addEventListener('click', () => openModal(
+    '<div class="m-title">Вывод средств<button class="m-close">✕</button></div>'+
+    '<div class="m-sub">Вывод средств пока не подключён.</div>'+
+    '<div class="note">Вывод не реализован и не запрашивает платёжные реквизиты. Это демонстрация интерфейса.</div>'+
+    '<div class="btn-row"><button class="btn block m-close">Понятно</button></div>'
+  ));
+  $('#pfSupport').addEventListener('click', () => openContact(state.support, 'Поддержка пока не настроена'));
+}
+
+/* =====================================================================
+   ADMIN PANEL (separate, reached via #admin hash)
+   ===================================================================== */
+function renderAdmin(){
+  const root = $('#adminPanel');
+  if(!state.adminLogged.in){
+    root.innerHTML =
+      '<div class="admin-wrap">'+
+        '<header><div class="logo">R</div><h1>Админ-панель ROOBY Market</h1>'+
+        '<p>Демонстрационный режим. Настоящей авторизации здесь нет.</p></header>'+
+        '<div class="admin-login">'+
+          '<div class="field"><label for="admLogin">Логин</label><input type="text" id="admLogin" autocomplete="off" placeholder="admin"></div>'+
+          '<div class="field"><label for="admPass">Пароль</label><input type="password" id="admPass" autocomplete="off" placeholder="demo"></div>'+
+          '<button class="btn primary block" id="admSubmit">Войти</button>'+
+          '<div class="note warn" style="margin-top:14px">Демо-вход: <strong>admin / demo</strong>. Открытая ссылка и localStorage <strong>не защищают</strong> админку. Настоящая авторизация — только на сервере. Пароли и секреты в коде НЕ хранятся.</div>'+
+        '</div>'+
+      '</div>';
+    root.style.display = 'block';
+    $('#app').style.display = 'none';
+
+    function login(){
+      const l = $('#admLogin').value.trim();
+      const p = $('#admPass').value.trim();
+      if(l === state.adminLogged.login && p === state.adminLogged.pass){
+        state.adminLogged.in = true; saveState();
+        toast('Демо-вход выполнен'); renderAdmin();
+      } else {
+        toast('Неверный логин или пароль (демо: admin / demo)');
+      }
+    }
+    $('#admSubmit').addEventListener('click', login);
+    $('#admPass').addEventListener('keydown', e => { if(e.key==='Enter') login(); });
+    return;
+  }
+
+  const sections = [
+    { id:'tl', ic:'👥', t:'Team Lead', s:'Профили, ники, описания, специализации' },
+    { id:'guar', ic:'🛡️', t:'Гаранты', s:'Список гарантов и назначение' },
+    { id:'drop', ic:'📦', t:'Дроповоды', s:'Города и контакты' },
+    { id:'links', ic:'🔗', t:'Ссылки', s:'Прямая ссылка на Rosplat' },
+    { id:'codes', ic:'🔑', t:'Коды доступа', s:'Одноразовые демо-коды' },
+    { id:'manuals', ic:'📚', t:'Мануалы', s:'Карточки и материалы' },
+    { id:'edu', ic:'🎓', t:'Обучение', s:'Тарифы и общий контакт' },
+    { id:'draw', ic:'🎨', t:'Отрисовка', s:'Цена и контакт' },
+    { id:'support', ic:'🎧', t:'Поддержка', s:'Общий Telegram-контакт' },
+    { id:'mod', ic:'📝', t:'Модерация', s:'Заявки, одобрение/отклонение' },
+    { id:'cats', ic:'🗂️', t:'Категории', s:'Видимость разделов' }
+  ];
+
+  root.innerHTML =
+    '<div class="admin-wrap">'+
+      '<header style="display:flex;align-items:center;justify-content:space-between;text-align:left">'+
+        '<div><div class="logo" style="margin:0 0 8px">R</div><h1>Панель управления</h1></div>'+
+        '<button class="btn ghost" id="admExit">Выйти</button>'+
+      '</header>'+
+      '<div class="admin-dash">'+
+        sections.map(s =>
+          '<div class="admin-card" data-admin="'+s.id+'" role="button" tabindex="0">'+
+            '<div class="ic">'+s.ic+'</div><div class="t">'+s.t+'</div><div class="s">'+s.s+'</div>'+
+          '</div>').join('')+
+      '</div>'+
+      '<div class="note warn" style="margin-top:18px">Изменения сохраняются в <strong>localStorage</strong> только для демонстрации обновления интерфейса. localStorage — не защищённое хранилище и не база данных, без синхронизации между пользователями. Реальная админка требует backend и серверной проверки личности и прав.</div>'+
+    '</div>';
+  root.style.display = 'block';
+  $('#app').style.display = 'none';
+
+  $('#admExit').addEventListener('click', () => {
+    state.adminLogged.in = false; saveState();
+    exitAdmin();
+  });
+  $$('#adminPanel [data-admin]').forEach(c => {
+    c.addEventListener('click', () => openAdminSection(c.dataset.admin));
+    c.addEventListener('keydown', e => { if(e.key==='Enter') openAdminSection(c.dataset.admin); });
+  });
+}
+
+function adminHeader(title){
+  return '<button class="btn ghost small" style="margin-bottom:14px" id="admBack">‹ Назад</button>'+
+         '<div class="section-title">'+title+'</div>';
+}
+
+function openAdminSection(id){
+  const root = $('#adminPanel');
+  let html = '<div class="admin-wrap">';
+
+  if(id === 'tl'){
+    html += adminHeader('Team Lead');
+    html += state.teamLeads.map(t =>
+      '<div class="admin-item">'+
+        '<div class="avatar violet">'+monogram(t.name)+'</div>'+
+        '<div class="info"><div class="t">'+esc(t.name)+'</div><div class="s">@'+esc(t.username)+' · '+esc(t.spec)+'</div></div>'+
+        '<div class="acts">'+
+          '<button class="mini-btn" data-edit="tl" data-id="'+t.id+'" title="Изменить">✎</button>'+
+          '<button class="mini-btn danger" data-del="tl" data-id="'+t.id+'" title="Удалить">✕</button>'+
+        '</div>'+
+      '</div>').join('');
+    html += '<button class="btn block" id="admAddTl">＋ Добавить Team Lead</button>';
+  }
+  else if(id === 'guar'){
+    html += adminHeader('Гаранты');
+    html += state.guarantors.map(g =>
+      '<div class="admin-item">'+
+        '<div class="avatar">'+monogram(g.name)+'</div>'+
+        '<div class="info"><div class="t">'+esc(g.name)+(g.assigned?' <span class="chip green">назначен</span>':'')+'</div>'+
+        '<div class="s">@'+esc(g.username)+'</div></div>'+
+        '<div class="acts">'+
+          '<button class="mini-btn" data-assign="'+g.id+'" title="Назначить за сделку">⭐</button>'+
+          '<button class="mini-btn" data-edit="guar" data-id="'+g.id+'" title="Изменить">✎</button>'+
+          '<button class="mini-btn danger" data-del="guar" data-id="'+g.id+'" title="Удалить">✕</button>'+
+        '</div>'+
+      '</div>').join('');
+    html += '<button class="btn block" id="admAddGuar">＋ Добавить гаранта</button>';
+  }
+  else if(id === 'drop'){
+    html += adminHeader('Дроповоды');
+    html += state.cities.map(city => {
+      const cs = state.dropovods[city] || [];
+      return '<div class="admin-item" style="flex-direction:column;align-items:stretch">'+
+        '<div style="display:flex;align-items:center;gap:12px">'+
+          '<span style="font-weight:700;flex:1">'+esc(city)+' <span class="chip muted">'+cs.length+'</span></span>'+
+          '<button class="btn small ghost" data-drop-add="'+esc(city)+'">＋ контакт</button>'+
+        '</div>'+
+        cs.map(c =>
+          '<div class="admin-item" style="margin:8px 0 0;background:var(--surface-2)">'+
+            '<div class="info"><div class="t" style="font-size:13px">'+esc(c.name)+'</div><div class="s">@'+esc(c.username)+'</div></div>'+
+            '<div class="acts">'+
+              '<button class="mini-btn" data-edit="dropc" data-city="'+esc(city)+'" data-id="'+c.id+'" title="Изменить">✎</button>'+
+              '<button class="mini-btn danger" data-del="dropc" data-city="'+esc(city)+'" data-id="'+c.id+'" title="Удалить">✕</button>'+
+            '</div>'+
+          '</div>').join('')+
+      '</div>';
+    }).join('');
+    html += '<div class="note" style="margin-top:12px">Города добавляются/удаляются в разделе «Категории» → города (в перспективе). В этой демо-версии — редактирование контактов.</div>';
+  }
+  else if(id === 'links'){
+    html += adminHeader('Ссылки');
+    html += '<div class="field"><label for="admRosplatLink">Ссылка прямого подключения к Rosplat</label>'+
+      '<input type="url" id="admRosplatLink" value="'+esc(state.directRosplatLink)+'" placeholder="https://example.com/register">'+
+      '<div class="hint">Только http/https. Пустое поле — показывается «Ссылка скоро появится».</div></div>'+
+      '<button class="btn primary block" id="admSaveLink">Сохранить</button>'+
+      '<div class="note" style="margin-top:12px">В будущем сюда добавятся другие площадки.</div>';
+  }
+  else if(id === 'codes'){
+    html += adminHeader('Коды доступа');
+    html += state.accessCodes.map(c =>
+      '<div class="admin-item">'+
+        '<div class="avatar ghost">🔑</div>'+
+        '<div class="info"><div class="t">'+esc(c.code)+'</div><div class="s">'+(c.used?'Использован':'Не использован')+'</div></div>'+
+        (c.used ? '<span class="chip red">использован</span>' : '<span class="chip green">свободен</span>')+
+        '<button class="mini-btn danger" data-delcode="'+esc(c.code)+'" title="Удалить" style="margin-left:8px">✕</button>'+
+      '</div>').join('');
+    html += '<div class="btn-row" style="margin-top:12px"><button class="btn block" id="admGenCode">＋ Создать код</button></div>';
+    html += '<div class="note warn">Одноразовые коды — демонстрация. Настоящая проверка возможна только на сервере.</div>';
+  }
+  else if(id === 'manuals'){
+    html += adminHeader('Мануалы');
+    html += state.manuals.map(m =>
+      '<div class="admin-item">'+
+        '<div class="avatar ghost">'+monogram(m.name)+'</div>'+
+        '<div class="info"><div class="t">'+esc(m.name)+'</div><div class="s">'+(m.ready?'Материалы доступны':'Материалы скоро появятся')+'</div></div>'+
+        '<button class="mini-btn" data-manual-toggle="'+esc(m.name)+'" title="Переключить доступность">'+(m.ready?'✓':'○')+'</button>'+
+      '</div>').join('');
+  }
+  else if(id === 'edu'){
+    html += adminHeader('Обучение');
+    html += '<div class="field"><label for="admEduContact">Общий Telegram-контакт (ник без @)</label>'+
+      '<input type="text" id="admEduContact" value="'+esc(state.trainingContact)+'"></div>';
+    html += state.tariffs.map(t =>
+      '<div class="admin-item">'+
+        '<div class="info"><div class="t">'+esc(t.title)+'</div><div class="s">'+esc(t.price)+'</div></div>'+
+        '<button class="mini-btn" data-edit="tariff" data-id="'+t.id+'" title="Изменить">✎</button>'+
+      '</div>').join('');
+    html += '<button class="btn block" id="admSaveEdu" style="margin-top:12px">Сохранить контакт</button>';
+  }
+  else if(id === 'draw'){
+    html += adminHeader('Отрисовка');
+    html += '<div class="field"><label for="admDrawPrice">Цена, ₽</label><input type="text" id="admDrawPrice" value="'+esc(state.drawingPrice)+'"></div>'+
+      '<div class="field"><label for="admDrawContact">Telegram-контакт (ник без @)</label><input type="text" id="admDrawContact" value="'+esc(state.drawingContact)+'"></div>'+
+      '<button class="btn primary block" id="admSaveDraw">Сохранить</button>'+
+      '<div class="note">Отрисовка — карточка услуги с ценой и контактом. Содержание услуги администратор задаёт отдельно и законно.</div>';
+  }
+  else if(id === 'support'){
+    html += adminHeader('Поддержка');
+    html += '<div class="field"><label for="admSupport">Общий Telegram-контакт (ник без @)</label>'+
+      '<input type="text" id="admSupport" value="'+esc(state.support)+'"></div>'+
+      '<button class="btn primary block" id="admSaveSupport">Сохранить</button>';
+  }
+  else if(id === 'mod'){
+    html += adminHeader('Модерация');
+    if(!state.moderation.length){
+      html += '<div class="empty"><div class="ic">📭</div><div class="t">Нет заявок</div></div>';
+    } else {
+      html += state.moderation.map(m =>
+        '<div class="admin-item" style="flex-direction:column;align-items:stretch">'+
+          '<div style="display:flex;align-items:center;gap:12px">'+
+            '<div class="avatar ghost">'+monogram(m.title)+'</div>'+
+            '<div class="info"><div class="t">'+esc(m.title)+'</div>'+
+            '<div class="s">'+esc(m.desc)+' · '+esc(m.price)+'</div></div>'+
+            (m.status==='pending'?'<span class="chip amber">на рассмотрении</span>': m.status==='approved'?'<span class="chip green">одобрено</span>':'<span class="chip red">отклонено</span>')+
+          '</div>'+
+          (m.status==='pending' ?
+            '<div class="btn-row" style="margin-top:10px">'+
+              '<button class="btn small ghost" data-mod-ok="'+m.id+'">✓ Одобрить</button>'+
+              '<button class="btn small ghost" data-mod-no="'+m.id+'">✕ Отклонить</button>'+
+            '</div>' : '')+
+        '</div>').join('');
+    }
+  }
+  else if(id === 'cats'){
+    html += adminHeader('Категории');
+    html += CATEGORIES.map(c =>
+      '<div class="admin-item">'+
+        '<div class="avatar ghost">'+c.ic+'</div>'+
+        '<div class="info"><div class="t">'+esc(c.nm)+'</div><div class="s">'+(c.id==='guarantor'?'курирует администратор':'')+'</div></div>'+
+        '<button class="mini-btn" data-cat-toggle="'+c.id+'" title="Видимость">'+(state.categories[c.id].visible?'👁':'🚫')+'</button>'+
+      '</div>').join('');
+  }
+
+  html += '</div>';
+  root.innerHTML = html;
+
+  bindAdmin(id);
+
+  const backBtn = $('#admBack');
+  if(backBtn) backBtn.addEventListener('click', () => renderAdmin());
+}
+
+function bindAdmin(section){
+  const root = $('#adminPanel');
+
+  if(section === 'tl'){
+    $('#admAddTl').addEventListener('click', () => {
+      openModal(editableForm('tladd', {label:'Добавить Team Lead', fields:{name:'Имя', username:'Ник (без @)', spec:'Специализация', bio:'Описание (textarea)'}}));
+    });
+  }
+  if(section === 'guar'){
+    $('#admAddGuar').addEventListener('click', () => {
+      openModal(editableForm('guaradd', {label:'Добавить гаранта', fields:{name:'Имя', username:'Ник (без @)'}}));
+    });
+  }
+  if(section === 'links'){
+    $('#admSaveLink').addEventListener('click', () => {
+      const v = $('#admRosplatLink').value.trim();
+      if(v && !/^https?:\/\//.test(v)){ toast('Ссылка должна начинаться с http:// или https://'); return; }
+      state.directRosplatLink = v; saveState(); toast('Ссылка сохранена (демо)');
+    });
+  }
+  if(section === 'codes'){
+    $('#admGenCode').addEventListener('click', () => {
+      const code = 'RB' + Math.random().toString(36).slice(2,8).toUpperCase();
+      state.accessCodes.push({ code, used:false }); saveState();
+      toast('Код '+code+' создан'); openAdminSection('codes');
+    });
+  }
+  if(section === 'edu'){
+    $('#admSaveEdu').addEventListener('click', () => {
+      state.trainingContact = $('#admEduContact').value.trim().replace(/^@/,''); saveState(); toast('Контакт сохранён');
+    });
+  }
+  if(section === 'draw'){
+    $('#admSaveDraw').addEventListener('click', () => {
+      state.drawingPrice = $('#admDrawPrice').value.trim();
+      state.drawingContact = $('#admDrawContact').value.trim().replace(/^@/,''); saveState(); toast('Сохранено');
+    });
+  }
+  if(section === 'support'){
+    $('#admSaveSupport').addEventListener('click', () => {
+      state.support = $('#admSupport').value.trim().replace(/^@/,''); saveState(); toast('Контакт поддержки сохранён');
+    });
+  }
+
+  // Edit buttons
+  $$('#adminPanel [data-edit]').forEach(b => b.addEventListener('click', () => {
+    const kind = b.dataset.edit;
+    if(kind==='tl'){
+      const t = state.teamLeads.find(x=>x.id===b.dataset.id);
+      openModal(editableForm('tledit', {id:t.id, label:'Изменить Team Lead', fields:{name:t.name, username:t.username, spec:t.spec, bio:t.bio, bioArea:true}}));
+    } else if(kind==='guar'){
+      const g = state.guarantors.find(x=>x.id===b.dataset.id);
+      openModal(editableForm('guaredit', {id:g.id, label:'Изменить гаранта', fields:{name:g.name, username:g.username}}));
+    } else if(kind==='dropc'){
+      const city = b.dataset.city;
+      const arr = state.dropovods[city] || [];
+      const c = arr.find(x=>x.id===b.dataset.id);
+      openModal(editableForm('dropcedit', {id:c.id, city, label:'Изменить контакт', fields:{name:c.name, username:c.username, desc:c.desc, descArea:true}}));
+    } else if(kind==='tariff'){
+      const t = state.tariffs.find(x=>x.id===b.dataset.id);
+      openModal(editableForm('tariffedit', {id:t.id, label:'Изменить тариф', fields:{title:t.title, price:t.price, tag:t.tag, desc:t.desc, descArea:true}}));
+    }
+  }));
+
+  // Delete buttons
+  $$('#adminPanel [data-del]').forEach(b => b.addEventListener('click', () => {
+    if(!confirm('Удалить эту демо-запись?')) return;
+    const kind = b.dataset.del;
+    if(kind==='tl'){ state.teamLeads = state.teamLeads.filter(x=>x.id!==b.dataset.id); }
+    else if(kind==='guar'){ state.guarantors = state.guarantors.filter(x=>x.id!==b.dataset.id); }
+    else if(kind==='dropc'){
+      const city = b.dataset.city;
+      if(state.dropovods[city]) state.dropovods[city] = state.dropovods[city].filter(x=>x.id!==b.dataset.id);
+    }
+    saveState(); openAdminSection(section);
+  }));
+
+  // Assign guarantor
+  $$('#adminPanel [data-assign]').forEach(b => b.addEventListener('click', () => {
+    state.guarantors.forEach(g => g.assigned = (g.id===b.dataset.assign));
+    saveState(); toast('Гарант назначен (демо)'); openAdminSection('guar');
+  }));
+
+  // Dropovod add contact
+  $$('#adminPanel [data-drop-add]').forEach(b => b.addEventListener('click', () => {
+    const city = b.dataset.dropAdd;
+    openModal(editableForm('dropcadd', {city, label:'Добавить контакт в «'+city+'»', fields:{name:'Имя', username:'Ник (без @)', desc:'Описание (textarea)', descArea:true}}));
+  }));
+
+  // Delete code
+  $$('#adminPanel [data-delcode]').forEach(b => b.addEventListener('click', () => {
+    if(!confirm('Удалить код?')) return;
+    state.accessCodes = state.accessCodes.filter(c=>c.code!==b.dataset.delcode);
+    saveState(); openAdminSection('codes');
+  }));
+
+  // Manual toggle
+  $$('#adminPanel [data-manual-toggle]').forEach(b => b.addEventListener('click', () => {
+    const m = state.manuals.find(x=>x.name===b.dataset.manualToggle);
+    m.ready = !m.ready; saveState(); openAdminSection('manuals');
+  }));
+
+  // Moderation
+  $$('#adminPanel [data-mod-ok]').forEach(b => b.addEventListener('click', () => {
+    const m = state.moderation.find(x=>x.id===b.dataset.modOk); m.status='approved'; saveState(); openAdminSection('mod');
+  }));
+  $$('#adminPanel [data-mod-no]').forEach(b => b.addEventListener('click', () => {
+    const m = state.moderation.find(x=>x.id===b.dataset.modNo); m.status='rejected'; saveState(); openAdminSection('mod');
+  }));
+
+  // Category toggle
+  $$('#adminPanel [data-cat-toggle]').forEach(b => b.addEventListener('click', () => {
+    const c = state.categories[b.dataset.catToggle]; c.visible = !c.visible; saveState(); openAdminSection('cats');
+  }));
+}
+
+function editableForm(mode, opts){
+  const f = opts.fields || {};
+  const keys = Object.keys(f);
+  const isEdit = /edit$/.test(mode) || mode==='tledit' || mode==='guaredit' || mode==='dropcedit' || mode==='tariffedit';
+
+  const fieldHtml = keys.map(k => {
+    const val = f[k];
+    const isArea = k==='bio' || k==='desc';
+    const label = k==='bio' ? 'Описание' : k==='desc' ? 'Описание' : k[0].toUpperCase()+k.slice(1);
+    if(isArea) return '<div class="field"><label>'+label+'</label><textarea id="ef_'+k+'" placeholder="'+label+'">'+esc(val)+'</textarea></div>';
+    return '<div class="field"><label>'+label+'</label><input type="text" id="ef_'+k+'" value="'+esc(val)+'"></div>';
+  }).join('');
+
+  openModal(
+    '<div class="m-title">'+esc(opts.label)+'<button class="m-close">✕</button></div>'+
+    fieldHtml +
+    '<button class="btn primary block" id="efSave">Сохранить</button>'
+  );
+
+  $('#efSave').addEventListener('click', () => {
+    const vals = {};
+    keys.forEach(k => { vals[k] = $('#ef_'+k).value.trim(); });
+    if(!vals.name && 'name' in f){ toast('Укажите имя'); return; }
+    applyForm(mode, opts, vals);
+  });
+}
+
+function applyForm(mode, opts, vals){
+  if(mode==='tladd'){
+    if(!vals.name || !vals.username){ toast('Заполните имя и ник'); return; }
+    state.teamLeads.push({ id:'tl'+Date.now(), name:vals.name, username:vals.username.replace(/^@/,''), spec:vals.spec||'—', bio:vals.bio||'—' });
+  } else if(mode==='tledit'){
+    const t = state.teamLeads.find(x=>x.id===opts.id);
+    t.name=vals.name; t.username=vals.username.replace(/^@/,''); t.spec=vals.spec; t.bio=vals.bio;
+  } else if(mode==='guaradd'){
+    if(!vals.name || !vals.username){ toast('Заполните имя и ник'); return; }
+    state.guarantors.push({ id:'g'+Date.now(), name:vals.name, username:vals.username.replace(/^@/,''), assigned:false });
+  } else if(mode==='guaredit'){
+    const g = state.guarantors.find(x=>x.id===opts.id); g.name=vals.name; g.username=vals.username.replace(/^@/,'');
+  } else if(mode==='dropcadd'){
+    if(!vals.name || !vals.username){ toast('Заполните имя и ник'); return; }
+    if(!state.dropovods[opts.city]) state.dropovods[opts.city] = [];
+    state.dropovods[opts.city].push({ id:'d'+Date.now(), name:vals.name, username:vals.username.replace(/^@/,''), desc:vals.desc||'—' });
+  } else if(mode==='dropcedit'){
+    const arr = state.dropovods[opts.city] || [];
+    const c = arr.find(x=>x.id===opts.id);
+    if(c){ c.name=vals.name; c.username=vals.username.replace(/^@/,''); c.desc=vals.desc; }
+  } else if(mode==='tariffedit'){
+    const t = state.tariffs.find(x=>x.id===opts.id);
+    t.title=vals.title; t.price=vals.price; t.tag=vals.tag; t.desc=vals.desc;
+  }
+  saveState(); closeModal(); toast('Сохранено (демо)');
+  // re-open current admin section
+  const active = state; // no-op to keep flow simple; re-render dashboard
+  renderAdmin();
+}
+
+/* ---------- Admin routing via hash ---------- */
+function enterAdmin(){ renderAdmin(); }
+function exitAdmin(){
+  $('#adminPanel').style.display = 'none';
+  $('#adminPanel').innerHTML = '';
+  $('#app').style.display = 'flex';
+  if(location.hash === '#admin'){ history.replaceState(null,'',location.pathname+location.search); }
+  showScreen('screen-home');
+}
+
+function handleHash(){
+  if(location.hash === '#admin'){
+    enterAdmin();
+  } else {
+    exitAdmin();
+  }
+}
+window.addEventListener('hashchange', handleHash);
+
+/* ---------- Init ---------- */
+function init(){
+  // header action button currently unused (kept for future)
+  showScreen('screen-home');
+  if(location.hash === '#admin'){ enterAdmin(); }
+
+  if(window.Telegram && Telegram.WebApp){
+    try{ Telegram.WebApp.ready(); Telegram.WebApp.expand(); }catch(e){}
+  }
+}
+
+init();
+</script>
+</body>
+</html>
